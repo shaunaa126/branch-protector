@@ -3,8 +3,19 @@ const nock = require("nock");
 const myProbotApp = require("..");
 const { Probot, ProbotOctokit } = require("probot");
 // Requiring our fixtures
-const payload = require("./fixtures/issues.opened");
-const issueCreatedBody = { body: "Thanks for opening this issue!" };
+const payload = require("./fixtures/branch.created");
+//const issueCreatedBody = { body: "Thanks for opening this issue!" };
+const issueCreated = {
+  owner: `nuistics`,
+  repo: `test-stuff`,
+  title: `Branch protections rules have been added on main branch`,
+  body: `Hello @shaunaa126, the following branch protection rules are in place for the main branch on this repository
+  - Require a pull request before merging with at least one approver 
+  - Dismiss stale reviews
+  - Require status checks
+  - Require branches to be up to date before merging
+  - Enforce branch protection rules on administrators`
+}
 const fs = require("fs");
 const path = require("path");
 
@@ -31,20 +42,23 @@ describe("My Probot app", () => {
     probot.load(myProbotApp);
   });
 
-  test("creates a comment when an issue is opened", async () => {
+  test("creates an issue when an repository is created", async () => {
     const mock = nock("https://api.github.com")
       // Test that we correctly return a test token
       .post("/app/installations/2/access_tokens")
       .reply(200, {
         token: "test",
         permissions: {
+          administration: "write",
+          contents: "read",
           issues: "write",
+          metadata: "read"
         },
       })
 
-      // Test that a comment is posted
-      .post("/repos/hiimbex/testing-things/issues/1/comments", (body) => {
-        expect(body).toMatchObject(issueCreatedBody);
+      // Test that a issue is created
+      .post("/repos/nuistics/test-stuff/issues/1", (body) => {
+        expect(body).toMatchObject(issueCreated);
         return true;
       })
       .reply(200);

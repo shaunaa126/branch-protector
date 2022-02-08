@@ -1,0 +1,21 @@
+{
+  "action": "created",
+  "ref": "main",
+  "ref_type": "branch",
+  "master_branch": "main",
+  "issue": {
+    "number": 1,
+    "user": {
+      "login": "nuistics"
+    }
+  },
+  "repository": {
+    "name": "test-stuff",
+    "owner": {
+      "login": "nuistics"
+    }
+  },
+  "installation": {
+    "id": 99294603
+  }
+}
